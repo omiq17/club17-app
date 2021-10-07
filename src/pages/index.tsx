@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import { Flex, Container, Heading, Image, Stack, Button } from '@chakra-ui/react';
-import Layout from '../components/Layout';
+import Link from 'next/link'
+import { Flex, Heading, Image, Stack, Button } from '@chakra-ui/react'
+import Layout from '../components/Layout'
 
 export default function Home() {
   return (
@@ -20,5 +20,5 @@ export default function Home() {
         </Link>
       </Stack>
     </Layout>
-  );
-};
+  )
+}
