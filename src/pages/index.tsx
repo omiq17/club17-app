@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Flex, Heading, Image, Stack, Button } from '@chakra-ui/react'
-import Layout from '../components/Layout'
+import Layout from '../common/components/Layout'
 
 export default function Home() {
   return (
