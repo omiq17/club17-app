@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { showErrorToast, showSuccessToast } from "../../common/utils/toasts";
 
-import { RootState } from "../../redux/store";
 import { IError, ILoginAttributes, ILoginResult, IUser } from "./types";
 
 interface IUserState {
@@ -23,7 +22,7 @@ export const login = createAsyncThunk<
 >('user/login', async (data, thunkApi) => {
   const response = await axios({
     method: "POST",
-    url: `${process.env.SERVER_URL}/v1/user/login`,
+    url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/user/login`,
     data: data
   });
 
@@ -38,8 +37,8 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    reset: state => {
-      state = initialState
+    setUserInfo: (state, action: PayloadAction<IUser>) => {
+      state.info = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -48,22 +47,23 @@ export const userSlice = createSlice({
         state.loading = true
       })
       .addCase(login.fulfilled, (state, action) => {
+        const userInfo = action.payload.user
         state.loading = false
-        state.info = action.payload.user
-        showSuccessToast("Successfully logged in")
+        state.info = userInfo
+        showSuccessToast("Login success")
+
+        // set data to local storage
+        localStorage.setItem("club17app.user", JSON.stringify(userInfo))
       })
       .addCase(login.rejected, (state, action) => {
-        state = initialState
-        const errorMessage = action.payload.message || action.error.message
+        state.loading = false
+        const errorMessage = action.payload?.message || action.error.message
         console.log(errorMessage, "ERROR")
         showErrorToast("Unable to login", errorMessage)
       })
   }
 })
 
-export const { reset } = userSlice.actions
-
-export const userInfo = (state: RootState) => state.user.info
-export const userLoading = (state: RootState) => state.user.loading
+export const { setUserInfo } = userSlice.actions
 
 export default userSlice.reducer

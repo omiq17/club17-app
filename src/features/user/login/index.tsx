@@ -1,10 +1,34 @@
 import { Box, Button, Heading, Image, Input, VStack } from "@chakra-ui/react";
+import { useRouter } from "next/dist/client/router";
+import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { ILoginAttributes } from "../types";
+import { login } from "../userSlice";
 
 export default function LoginMain() {
-  const onLogin = (e) => {
+  const [data, setData] = useState<ILoginAttributes | undefined>()
+
+  const { info, loading } = useAppSelector(state => state.user)
+  const dispatch = useAppDispatch()
+  const router = useRouter()
+
+  const onInputChange = (event) => setData({
+    ...data,
+    [event.target.name]: event.target.value
+  })
+
+  const onLogin = async (e) => {
     e.preventDefault()
-    console.log("Login")
+
+    if (data) {
+      const loginAction = await dispatch(login(data))
+      if (login.fulfilled.match(loginAction)) {
+        router.push("/members")
+      }
+    }
   }
+
+  console.log("info", info)
 
   return (
     <Box>
@@ -13,9 +37,24 @@ export default function LoginMain() {
 
       <form id="login-form" onSubmit={onLogin}>
         <VStack spacing="4">
-          <Input placeholder="Username" />
-          <Input placeholder="Password" type="password" />
-          <Button type="submit">Login</Button>
+          <Input
+            name="username"
+            placeholder="Username"
+            value={data?.username || ""}
+            onChange={onInputChange}
+          />
+          <Input
+            name="password"
+            placeholder="Password"
+            type="password"
+            value={data?.password || ""}
+            onChange={onInputChange} />
+          <Button
+            type="submit"
+            isLoading={loading}
+          >
+            Login
+          </Button>
         </VStack>
       </form>
     </Box>
