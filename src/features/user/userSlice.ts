@@ -3,7 +3,7 @@ import axios from "axios";
 import { showErrorToast, showSuccessToast } from "../../common/utils/toasts";
 
 import { RootState } from "../../redux/store";
-import { IUser, IUserLogin } from "./types";
+import { IError, ILoginAttributes, ILoginResult, IUser } from "./types";
 
 interface IUserState {
   info?: IUser;
@@ -14,9 +14,24 @@ const initialState: IUserState = {
   loading: false,
 };
 
-export const login = createAsyncThunk('user/login', async (data: { username: string, password: string }) => {
-  const response = await axios.post<IUserLogin, { data: IUser }>("/user/login", data);
-  return response.data
+export const login = createAsyncThunk<
+  ILoginResult,
+  ILoginAttributes,
+  {
+    rejectValue: IError
+  }
+>('user/login', async (data, thunkApi) => {
+  const response = await axios({
+    method: "POST",
+    url: `${process.env.SERVER_URL}/v1/user/login`,
+    data: data
+  });
+
+  if (response.status === 200) {
+    return response.data
+  } else {
+    return thunkApi.rejectWithValue(response.data)
+  }
 })
 
 export const userSlice = createSlice({
@@ -34,13 +49,14 @@ export const userSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false
-        state.info = action.payload
-        showSuccessToast("Login success")
+        state.info = action.payload.user
+        showSuccessToast("Successfully logged in")
       })
       .addCase(login.rejected, (state, action) => {
         state = initialState
-        console.log(action.payload || action.error.message, "ERROR")
-        showErrorToast("Unable to login", action.error.message || "")
+        const errorMessage = action.payload.message || action.error.message
+        console.log(errorMessage, "ERROR")
+        showErrorToast("Unable to login", errorMessage)
       })
   }
 })
