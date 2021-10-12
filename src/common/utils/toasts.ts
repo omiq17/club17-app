@@ -9,7 +9,7 @@ export function showSuccessToast(title: string, description?: string) {
     status: "success",
     position: "top-right",
     variant: "subtle",
-    duration: 9000,
+    duration: 5000,
     isClosable: true,
   })
 }
@@ -21,7 +21,7 @@ export function showErrorToast(title: string, description?: string) {
     status: "error",
     position: "top-right",
     variant: "subtle",
-    duration: 9000,
+    duration: 5000,
     isClosable: true,
   })
 }

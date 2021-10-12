@@ -7,10 +7,18 @@ import { IError, ILoginAttributes, ILoginResult, IUser } from "./types";
 interface IUserState {
   info?: IUser;
   loading: boolean;
+  auth: {
+    checked: boolean;
+    success: boolean;
+  }
 }
 
 const initialState: IUserState = {
   loading: false,
+  auth: {
+    checked: false,
+    success: false
+  }
 };
 
 export const login = createAsyncThunk<
@@ -39,6 +47,16 @@ export const userSlice = createSlice({
   reducers: {
     setUserInfo: (state, action: PayloadAction<IUser>) => {
       state.info = action.payload
+      state.auth = {
+        checked: true,
+        success: true
+      }
+    },
+    setAuthCheckingError: (state) => {
+      state.auth = {
+        checked: true,
+        success: false
+      }
     }
   },
   extraReducers: (builder) => {
@@ -58,12 +76,12 @@ export const userSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loading = false
         const errorMessage = action.payload?.message || action.error.message
-        console.log(errorMessage, "ERROR")
+        // console.log(errorMessage, "ERROR")
         showErrorToast("Unable to login", errorMessage)
       })
   }
 })
 
-export const { setUserInfo } = userSlice.actions
+export const { setUserInfo, setAuthCheckingError } = userSlice.actions
 
 export default userSlice.reducer

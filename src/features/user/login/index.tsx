@@ -1,6 +1,7 @@
 import { Box, Button, Heading, Image, Input, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/dist/client/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { showSuccessToast } from "../../../common/utils/toasts";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { ILoginAttributes } from "../types";
 import { login } from "../userSlice";
@@ -8,9 +9,16 @@ import { login } from "../userSlice";
 export default function LoginMain() {
   const [data, setData] = useState<ILoginAttributes | undefined>()
 
-  const { info, loading } = useAppSelector(state => state.user)
+  const { loading, auth } = useAppSelector(state => state.user)
   const dispatch = useAppDispatch()
   const router = useRouter()
+
+  useEffect(() => {
+    if (auth.success) {
+      showSuccessToast("Already logged in")
+      router.push("/members")
+    }
+  }, [auth, router])
 
   const onInputChange = (event) => setData({
     ...data,
@@ -27,8 +35,6 @@ export default function LoginMain() {
       }
     }
   }
-
-  console.log("info", info)
 
   return (
     <Box>

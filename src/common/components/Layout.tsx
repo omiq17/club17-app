@@ -1,29 +1,30 @@
 import { Button, Container, } from '@chakra-ui/react'
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { IUser } from '../../features/user/types'
-import { setUserInfo } from '../../features/user/userSlice'
-import { useAppDispatch } from '../../redux/hooks'
+import { setAuthCheckingError, setUserInfo } from '../../features/user/userSlice'
+import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 
 interface IProps {
   children: React.ReactNode;
 }
 
 export default function Layout(props: IProps) {
-  const [authChecking, setAuthChecking] = useState(true)
+  const { checked: authChecked } = useAppSelector(state => state.user.auth)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (authChecking) {
+    if (!authChecked) {
       // get data from local storage
       const user = localStorage.getItem("club17app.user")
       if (user) {
         const userInfo: IUser = JSON.parse(user)
         dispatch(setUserInfo(userInfo))
-        setAuthChecking(false)
+      } else {
+        dispatch(setAuthCheckingError())
       }
     }
-  }, [authChecking, dispatch])
+  }, [authChecked, dispatch])
 
   return (
     <Container maxW="xl" minH="100vh" centerContent justifyContent="center">
@@ -33,9 +34,9 @@ export default function Layout(props: IProps) {
         <link rel="icon" href="/favicon.png" />
       </Head>
 
-      {authChecking ?
+      {!authChecked ?
         <Button
-          isLoading={authChecking}
+          isLoading={!authChecked}
           loadingText="Stay with us"
           variant="ghost"
           size="lg"
