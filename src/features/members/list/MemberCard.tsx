@@ -1,5 +1,5 @@
-import { AtSignIcon, EmailIcon, InfoIcon, PhoneIcon, TimeIcon } from "@chakra-ui/icons";
-import { Box, HStack, Image, Circle, Text, Stack } from "@chakra-ui/react";
+import { AtSignIcon, DeleteIcon, EditIcon, EmailIcon, InfoIcon, PhoneIcon, TimeIcon } from "@chakra-ui/icons";
+import { Box, HStack, Image, Circle, Text, Stack, VStack } from "@chakra-ui/react";
 import { IMember } from "../types";
 
 interface IProps {
@@ -14,14 +14,25 @@ export default function MemberCard(props: IProps) {
       p="6"
       borderWidth="1px"
       borderRadius="lg"
-      borderColor="teal.100"
+      background="gray.100"
       overflow="hidden">
-      <Image
-        src={`https://ucarecdn.com/${data.avatar}/`}
-        borderRadius="lg"
-        boxSize="6rem"
-        alt={data.name}
-      />
+      <HStack alignItems="flex-start" justifyContent="space-between">
+        <Image
+          src={`https://ucarecdn.com/${data.avatar}/`}
+          borderRadius="lg"
+          boxSize="6rem"
+          alt={data.name}
+        />
+        <VStack cursor="pointer" spacing="4">
+          <Circle size="6" bg="teal.300" color="white">
+            <EditIcon />
+          </Circle>
+
+          <Circle size="6" bg="red.300" color="white" >
+            <DeleteIcon />
+          </Circle>
+        </VStack>
+      </HStack>
 
       <Stack mt="1rem" spacing="1">
         <HStack>
@@ -31,7 +42,7 @@ export default function MemberCard(props: IProps) {
           <Text color="gray.700" fontWeight="bold" fontSize="1.25em">{data.name}</Text>
         </HStack>
 
-        <HStack>
+        <HStack alignItems="flex-start">
           <Circle size="6" bg="white" color="gray.400" >
             <InfoIcon />
           </Circle>
