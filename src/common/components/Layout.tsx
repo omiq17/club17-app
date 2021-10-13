@@ -27,7 +27,7 @@ export default function Layout(props: IProps) {
   }, [authChecked, dispatch])
 
   return (
-    <Container maxW="1000px" minH="100vh" centerContent justifyContent="center">
+    <Container maxW="1100px" minH="100vh" centerContent justifyContent="center">
       <Head>
         <title>Club 17</title>
         <meta name="description" content="A small club management application" />

@@ -147,7 +147,6 @@ export function AddMemberModal(props: IProps) {
                     name="avatar"
                     size="sm"
                     placeholder="avatar"
-                    // value={imageFile || "" }
                     type="file"
                     accept="image/*"
                     onChange={onFileChange}

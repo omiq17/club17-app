@@ -55,7 +55,7 @@ export const addMember = createAsyncThunk<
       }
     });
     const result: IAddMemberResponse = response.data
-    return { newMember: { ...data, _id: result._id } }
+    return { newMember: { ...memberData, _id: result._id } }
   } catch (err) {
     return thunkApi.rejectWithValue(err.response.data)
 
