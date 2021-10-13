@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/members.schema.json",
+  "title": "Member form schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "description": "full name",
+      "type": "string",
+      "minLength": 3
+    },
+    "address": {
+      "description": "address info",
+      "type": "string"
+    },
+    "dob": {
+      "description": "date of birth",
+      "type": "string"
+    },
+    "email": {
+      "description": "email of the member",
+      "type": "string",
+      "pattern": "^\\S+@\\S+\\.\\S+$"
+    },
+    "phone": {
+      "description": "phone number",
+      "type": "number"
+    },
+    "avatar": {
+      "description": "image of member",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "address",
+    "dob",
+    "email",
+    "avatar"
+  ]
+}

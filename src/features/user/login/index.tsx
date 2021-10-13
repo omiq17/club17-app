@@ -1,13 +1,18 @@
-import { Box, Button, Heading, Image, Input, VStack } from "@chakra-ui/react";
-import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/dist/client/router";
+import { Box, Button, Heading, Image, Input, VStack } from "@chakra-ui/react";
+
 import { showSuccessToast } from "../../../common/utils/toasts";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { ILoginAttributes } from "../types";
+import { loginSchema } from "../../../schemas";
+import { ILoginAttributes, ILoginFormErrors } from "../types";
 import { login } from "../userSlice";
+import validator from "../../../common/validator";
+import ErrorText from "../../../common/components/ErrorText";
 
 export default function LoginMain() {
   const [data, setData] = useState<ILoginAttributes | undefined>()
+  const [errors, setErrors] = useState<ILoginFormErrors | undefined>()
 
   const { loading, auth } = useAppSelector(state => state.user)
   const dispatch = useAppDispatch()
@@ -15,8 +20,8 @@ export default function LoginMain() {
 
   useEffect(() => {
     if (auth.success) {
-      showSuccessToast("Already logged in")
       router.push("/members")
+      showSuccessToast("Already logged in")
     }
   }, [auth, router])
 
@@ -27,14 +32,19 @@ export default function LoginMain() {
 
   const onLogin = async (e) => {
     e.preventDefault()
+    setErrors(undefined)
+    const validation = validator(loginSchema, data)
 
-    if (data) {
+    if (validation.isValid) {
       const loginAction = await dispatch(login(data))
       if (login.fulfilled.match(loginAction)) {
         router.push("/members")
       }
+    } else {
+      setErrors(validation.errors)
     }
   }
+
 
   return (
     <Box>
@@ -49,12 +59,17 @@ export default function LoginMain() {
             value={data?.username || ""}
             onChange={onInputChange}
           />
+          <ErrorText message={errors?.username} />
+
           <Input
             name="password"
             placeholder="Password"
             type="password"
             value={data?.password || ""}
-            onChange={onInputChange} />
+            onChange={onInputChange}
+          />
+          <ErrorText message={errors?.password} />
+
           <Button
             type="submit"
             isLoading={loading}

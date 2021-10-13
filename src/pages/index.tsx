@@ -1,8 +1,11 @@
 import Link from 'next/link'
 import { Flex, Heading, Image, Stack, Button } from '@chakra-ui/react'
 import Layout from '../common/components/Layout'
+import { useAppSelector } from '../redux/hooks'
 
 export default function Home() {
+  const { info } = useAppSelector(state => state.user)
+
   return (
     <Layout>
       <Flex p={4} flexDirection="column" alignItems="center" gridGap="4">
@@ -11,14 +14,20 @@ export default function Home() {
         <Heading as="h3" size="lg" fontWeight="normal">Your club management app</Heading>
       </Flex>
 
-      <Stack direction="row" spacing={4} align="center">
-        <Link href="/login">
-          <Button>Login</Button>
+      {info ?
+        <Link href="/members">
+          <Button>Dashboard</Button>
         </Link>
-        <Link href="/signup">
-          <Button>Signup</Button>
-        </Link>
-      </Stack>
+        :
+        <Stack direction="row" spacing={4} align="center">
+          <Link href="/login">
+            <Button>Login</Button>
+          </Link>
+          <Link href="/signup">
+            <Button>Signup</Button>
+          </Link>
+        </Stack>
+      }
     </Layout>
   )
 }

@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/users.schema.json",
+  "title": "User signup form schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "description": "full name of the user",
+      "type": "string",
+      "minLength": 3
+    },
+    "username": {
+      "description": "a unique username of the user",
+      "type": "string",
+      "minLength": 3
+    },
+    "password": {
+      "description": "password of the user",
+      "type": "string",
+      "minLength": 6
+    },
+    "key": {
+      "description": "pass key to signup",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "username",
+    "password",
+    "key"
+  ],
+  "errorMessage": {
+    "properties": {
+      "name": "name:Minimum 3 characters required",
+      "username": "username:Minimum 3 characters required",
+      "password": "password:Minimum 6 characters required"
+    },
+    "required": {
+      "name": "name:Name is required",
+      "username": "username:Username is required",
+      "password": "password:Password is required",
+      "key": "key:Passkey is required"
+    }
+  }
+}

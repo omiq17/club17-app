@@ -20,6 +20,15 @@ const club17Theme = {
       defaultProps: {
         variant: "outline",
       },
+    },
+
+    Text: {
+      variants: {
+        error: {
+          color: "tomato",
+          fontSize: "0.75rem"
+        }
+      }
     }
   },
 };

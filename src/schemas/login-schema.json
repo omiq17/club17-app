@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/users.schema.json",
+  "title": "User login form schema",
+  "type": "object",
+  "properties": {
+    "username": {
+      "description": "a unique username of the user",
+      "type": "string",
+      "minLength": 3
+    },
+    "password": {
+      "description": "password of the user",
+      "type": "string",
+      "minLength": 6
+    }
+  },
+  "required": [
+    "username",
+    "password"
+  ],
+  "errorMessage": {
+    "properties": {
+      "username": "username:Minimum 3 characters required",
+      "password": "password:Minimum 6 characters required"
+    },
+    "required": {
+      "username": "username:Username is required",
+      "password": "password:Password is required"
+    }
+  }
+}
