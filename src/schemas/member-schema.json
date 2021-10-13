@@ -24,10 +24,6 @@
     },
     "phone": {
       "description": "phone number",
-      "type": "number"
-    },
-    "avatar": {
-      "description": "image of member",
       "type": "string"
     }
   },
@@ -35,7 +31,21 @@
     "name",
     "address",
     "dob",
-    "email",
-    "avatar"
-  ]
+    "email"
+  ],
+  "errorMessage": {
+    "properties": {
+      "name": "name:Minimum 3 characters required",
+      "address": "address:Address is invalid",
+      "dob": "dob:Date of Birth is invalid",
+      "email": "email:Email is invalid",
+      "phone": "phone:Phone is invalid"
+    },
+    "required": {
+      "name": "name:Name is required",
+      "address": "address:Address is required",
+      "dob": "dob:Date of Birth is required",
+      "email": "email:Email is required"
+    }
+  }
 }

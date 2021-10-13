@@ -25,3 +25,15 @@ export function showErrorToast(title: string, description?: string) {
     isClosable: true,
   })
 }
+
+export function showWarningToast(title: string, description?: string) {
+  return toast({
+    title,
+    description,
+    status: "warning",
+    position: "top",
+    variant: "subtle",
+    duration: 5000,
+    isClosable: true,
+  })
+}
