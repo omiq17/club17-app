@@ -2,7 +2,10 @@ import { createAsyncThunk, createSlice, } from "@reduxjs/toolkit";
 import axios from "axios";
 
 import { showErrorToast, showSuccessToast } from "../../common/utils/toasts";
-import { IAddMemberAttributes, IAddMemberResponse, IAddMemberResult, IError, IGetMembersResult, IMember } from "./types";
+import {
+  IAddMemberAttributes, IAddMemberResponse, IAddMemberResult, IError,
+  IGetMembersResult, IMember, IRemoveMemberAttributes, IUpdateMemberAttributes
+} from "./types";
 
 interface IMemberState {
   list: IMember[];
@@ -62,6 +65,52 @@ export const addMember = createAsyncThunk<
   }
 })
 
+export const updateMember = createAsyncThunk<
+  IMember,
+  IUpdateMemberAttributes,
+  {
+    rejectValue: IError
+  }
+>('member/update', async (data, thunkApi) => {
+  try {
+    const { token, ...memberData } = data
+    await axios({
+      method: "PUT",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/member/update/info/${memberData._id}`,
+      headers: {
+        "x-access-token": token
+      }
+    });
+    return memberData
+  } catch (err) {
+    return thunkApi.rejectWithValue(err.response.data)
+
+  }
+})
+
+export const removeMember = createAsyncThunk<
+  string,
+  IRemoveMemberAttributes,
+  {
+    rejectValue: IError
+  }
+>('member/remove', async (data, thunkApi) => {
+  try {
+    await axios({
+      method: "DELETE",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/member/delete/${data.id}`,
+      headers: {
+        "x-access-token": data.token
+      }
+    });
+    return data.id
+  } catch (err) {
+    return thunkApi.rejectWithValue(err.response.data)
+
+  }
+})
+
+
 export const membersSlice = createSlice({
   name: "member",
   initialState,
@@ -101,6 +150,34 @@ export const membersSlice = createSlice({
         state.loading = false
         const errorMessage = action.payload?.message || action.error.message
         showErrorToast("Unable to add member", errorMessage)
+      })
+      // Update member cases
+      .addCase(updateMember.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(updateMember.fulfilled, (state, action) => {
+        state.list = state.list.map((item) => item._id === action.payload._id ? action.payload : item)
+        state.loading = false
+        showSuccessToast("Successfully updated member data")
+      })
+      .addCase(updateMember.rejected, (state, action) => {
+        state.loading = false
+        const errorMessage = action.payload?.message || action.error.message
+        showErrorToast("Unable to update member data", errorMessage)
+      })
+      // Remove member cases
+      .addCase(removeMember.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(removeMember.fulfilled, (state, action) => {
+        state.list = state.list.filter((item) => item._id !== action.payload)
+        state.loading = false
+        showSuccessToast("Successfully removed the member")
+      })
+      .addCase(removeMember.rejected, (state, action) => {
+        state.loading = false
+        const errorMessage = action.payload?.message || action.error.message
+        showErrorToast("Unable to remove member", errorMessage)
       })
   }
 })

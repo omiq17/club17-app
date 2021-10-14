@@ -19,6 +19,11 @@ export interface IAddMemberAttributes {
   token?: string;
 }
 
+export interface IUpdateMemberAttributes extends IAddMemberAttributes {
+  _id: string;
+  userId?: string;
+}
+
 export interface IAddMemberFormErrors {
   name?: string;
   address?: string;
@@ -40,6 +45,11 @@ export interface IAddMemberResult {
 export interface IGetMembersResult {
   message: string;
   members: IMember[];
+}
+
+export interface IRemoveMemberAttributes {
+  id: string;
+  token: string;
 }
 
 export interface IError {
