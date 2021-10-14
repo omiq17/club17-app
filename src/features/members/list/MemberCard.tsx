@@ -4,10 +4,12 @@ import { IMember } from "../types";
 
 interface IProps {
   data: IMember
+  index: number
+  onRemoveInit: (index: number) => void
 }
 
 export default function MemberCard(props: IProps) {
-  const { data } = props
+  const { data, index, onRemoveInit } = props
 
   return (
     <Box
@@ -28,7 +30,7 @@ export default function MemberCard(props: IProps) {
             <EditIcon />
           </Circle>
 
-          <Circle size="6" bg="red.300" color="white" >
+          <Circle size="6" bg="red.300" color="white" onClick={() => onRemoveInit(index)}>
             <DeleteIcon />
           </Circle>
         </VStack>

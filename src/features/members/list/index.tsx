@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Box, Button, Divider, Flex, Grid, Heading, Image, Text, useDisclosure } from "@chakra-ui/react";
 import { PlusSquareIcon } from '@chakra-ui/icons'
 import { useRouter } from "next/dist/client/router";
@@ -8,6 +8,7 @@ import { getMembersList } from "../membersSlice";
 import { showErrorToast } from "../../../common/utils/toasts";
 import { AddMemberModal } from "../add";
 import MemberCard from "./MemberCard";
+import { RemoveMemberModal } from "../remove";
 
 export default function MembersList() {
   const {
@@ -15,7 +16,14 @@ export default function MembersList() {
     onOpen: onAddModalOpen,
     onClose: onAddModalClose
   } = useDisclosure()
-  const { members: { list, loading }, user: { info: userInfo } } = useAppSelector(state => state)
+  const {
+    isOpen: isRemoveModalOpen,
+    onOpen: onRemoveModalOpen,
+    onClose: onRemoveModalClose
+  } = useDisclosure()
+
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+  const { members: { list }, user: { info: userInfo } } = useAppSelector(state => state)
 
   const dispatch = useAppDispatch()
   const router = useRouter();
@@ -28,6 +36,11 @@ export default function MembersList() {
       showErrorToast("Please login first")
     }
   }, [dispatch, router, userInfo])
+
+  const onRemoveInit = useCallback((index: number) => {
+    setSelectedIndex(index)
+    onRemoveModalOpen()
+  }, [onRemoveModalOpen])
 
   console.log(list, "######")
 
@@ -60,7 +73,12 @@ export default function MembersList() {
 
       <Grid templateColumns="repeat(4, 1fr)" gap={4}>
         {list.map((member, i) =>
-          <MemberCard key={i} data={member} />
+          <MemberCard
+            key={i}
+            data={member}
+            index={i}
+            onRemoveInit={onRemoveInit}
+          />
         )}
       </Grid>
 
@@ -68,6 +86,13 @@ export default function MembersList() {
         token={userInfo.token}
         isOpen={isAddModalOpen}
         onClose={onAddModalClose}
+      />
+
+      <RemoveMemberModal
+        token={userInfo.token}
+        isOpen={isRemoveModalOpen}
+        onClose={onRemoveModalClose}
+        member={selectedIndex !== null ? list[selectedIndex] : undefined}
       />
     </Box>
   )
