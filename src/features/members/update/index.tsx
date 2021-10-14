@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import {
-  Box, Button, Input, Modal, ModalBody, ModalCloseButton, ModalContent,
+  Box, Button, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent,
   ModalFooter, ModalHeader, ModalOverlay, Text, VStack
 } from "@chakra-ui/react";
 
@@ -10,22 +10,29 @@ import { showErrorToast, showWarningToast } from "../../../common/utils/toasts";
 import validator from "../../../common/validator";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { memberSchema } from "../../../schemas";
-import { activeLoading, addMember, deActiveLoading } from "../membersSlice";
-import { IAddMemberAttributes, IAddMemberFormErrors } from "../types";
+import { activeLoading, deActiveLoading, updateMember } from "../membersSlice";
+import { IAddMemberFormErrors, IMember, IUpdateMemberAttributes } from "../types";
 
 interface IProps {
   token: string;
   isOpen: boolean;
   onClose: () => void;
+  member?: IMember;
 }
-export function AddMemberModal(props: IProps) {
-  const { token, isOpen, onClose } = props
+export function UpdateMemberModal(props: IProps) {
+  const { token, isOpen, onClose, member } = props
   const { loading } = useAppSelector(state => state.members)
 
-  const [data, setData] = useState<IAddMemberAttributes | undefined>()
+  const [data, setData] = useState<IUpdateMemberAttributes | undefined>()
   const [imageFile, setImageFile] = useState<File | undefined>();
   const [errors, setErrors] = useState<IAddMemberFormErrors | undefined>()
   const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    if (member?._id) {
+      setData({ ...member, _id: member._id })
+    }
+  }, [member])
 
   const onInputChange = (event) => setData({
     ...data,
@@ -43,45 +50,48 @@ export function AddMemberModal(props: IProps) {
     }
   }
 
-  const onAddMember = async (e) => {
+  const onUpdateMember = async (e) => {
     e.preventDefault()
     setErrors(undefined)
-
-    if (!imageFile) {
-      setErrors((prev) => {
-        return { ...prev, avatar: "Please select an avatar" }
-      })
-      return
-    }
 
     const validation = validator(memberSchema, data)
 
     if (validation.isValid) {
-      await dispatch(activeLoading())
-      // Upload avatar through UploadCare/3rd-party API
-      let formData = new FormData();
-      formData.append('UPLOADCARE_PUB_KEY', process.env.NEXT_PUBLIC_UPLOAD_KEY);
-      formData.append('UPLOADCARE_STORE', 'auto');
-      formData.append('file', imageFile);
-      await axios({
-        url: "https://upload.uploadcare.com/base/",
-        method: 'POST',
-        data: formData
-      })
-        .then(async (result: AxiosResponse<{ file: string }>) => {
-          // console.log('Success:', result);
-          const addMemberAction = await dispatch(addMember({ ...data, avatar: result.data.file, token }))
-          if (addMember.fulfilled.match(addMemberAction)) {
-            onClose()
-            setData(undefined)
-          }
+      if (imageFile) {
+        // if user select new file, then upload it first
+        await dispatch(activeLoading())
+        // Upload avatar through UploadCare/3rd-party API
+        let formData = new FormData();
+        formData.append('UPLOADCARE_PUB_KEY', process.env.NEXT_PUBLIC_UPLOAD_KEY);
+        formData.append('UPLOADCARE_STORE', 'auto');
+        formData.append('file', imageFile);
+        await axios({
+          url: "https://upload.uploadcare.com/base/",
+          method: 'POST',
+          data: formData
         })
-        .catch(() => {
-          // console.error('Upload error:', error);
-          dispatch(deActiveLoading())
-          showErrorToast("Failed to upload avatar", "Please try again")
-        });
-    } else {
+          .then(async (result: AxiosResponse<{ file: string }>) => {
+            // console.log('Success:', result);
+            const updateMemberAction = await dispatch(updateMember({ ...data, token, avatar: result.data.file }))
+            if (updateMember.fulfilled.match(updateMemberAction)) {
+              onClose()
+              setData(undefined)
+            }
+          })
+          .catch(() => {
+            // console.error('Upload error:', error);
+            dispatch(deActiveLoading())
+            showErrorToast("Failed to upload avatar", "Please try again")
+          });
+      } else {
+        const updateMemberAction = await dispatch(updateMember({ ...data, token }))
+        if (updateMember.fulfilled.match(updateMemberAction)) {
+          onClose()
+          setData(undefined)
+        }
+      }
+    }
+    else {
       setErrors(validation.errors)
     }
   }
@@ -91,12 +101,31 @@ export function AddMemberModal(props: IProps) {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <form id="login-form" onSubmit={onAddMember}>
-            <ModalHeader>Add New Member</ModalHeader>
+          <form id="login-form" onSubmit={onUpdateMember}>
+            <ModalHeader>Update Member</ModalHeader>
             <ModalCloseButton />
 
             <ModalBody>
               <VStack spacing="4">
+                <Box w="100%" p="0 0.5rem">
+                  <Image
+                    src={`https://ucarecdn.com/${data?.avatar}/`}
+                    borderRadius="lg"
+                    boxSize="6rem"
+                    alt={data?.name} />
+                  <Text color="gray" mt="2">Change avatar</Text>
+                  <Input
+                    variant="unstyled"
+                    p="0.25rem 0"
+                    name="avatar"
+                    size="sm"
+                    placeholder="avatar"
+                    type="file"
+                    accept="image/*"
+                    onChange={onFileChange}
+                  />
+                </Box>
+
                 <Input
                   name="name"
                   placeholder="Name"
@@ -138,21 +167,6 @@ export function AddMemberModal(props: IProps) {
                   onChange={onInputChange}
                 />
                 <ErrorText message={errors?.phone} />
-
-                <Box w="100%" p="0 0.5rem">
-                  <Text color="gray">Avatar</Text>
-                  <Input
-                    variant="unstyled"
-                    p="0.25rem 0"
-                    name="avatar"
-                    size="sm"
-                    placeholder="avatar"
-                    type="file"
-                    accept="image/*"
-                    onChange={onFileChange}
-                  />
-                </Box>
-                <ErrorText message={errors?.avatar} />
               </VStack>
             </ModalBody>
 
@@ -160,7 +174,7 @@ export function AddMemberModal(props: IProps) {
               <Button mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button type="submit" isLoading={loading}>Submit</Button>
+              <Button type="submit" isLoading={loading}>Update</Button>
             </ModalFooter>
           </form>
         </ModalContent>

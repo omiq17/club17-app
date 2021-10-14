@@ -1,15 +1,18 @@
+import { memo } from "react";
 import { AtSignIcon, DeleteIcon, EditIcon, EmailIcon, InfoIcon, PhoneIcon, TimeIcon } from "@chakra-ui/icons";
 import { Box, HStack, Image, Circle, Text, Stack, VStack } from "@chakra-ui/react";
+
 import { IMember } from "../types";
 
 interface IProps {
   data: IMember
   index: number
   onRemoveInit: (index: number) => void
+  onUpdateInit: (index: number) => void
 }
 
-export default function MemberCard(props: IProps) {
-  const { data, index, onRemoveInit } = props
+export default memo(function MemberCard(props: IProps) {
+  const { data, index, onRemoveInit, onUpdateInit } = props
 
   return (
     <Box
@@ -26,7 +29,7 @@ export default function MemberCard(props: IProps) {
           alt={data.name}
         />
         <VStack cursor="pointer" spacing="4">
-          <Circle size="6" bg="teal.300" color="white">
+          <Circle size="6" bg="teal.300" color="white" onClick={() => onUpdateInit(index)}>
             <EditIcon />
           </Circle>
 
@@ -76,4 +79,4 @@ export default function MemberCard(props: IProps) {
       </Stack>
     </Box>
   )
-}
+})

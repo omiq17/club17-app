@@ -24,7 +24,10 @@
     },
     "phone": {
       "description": "phone number",
-      "type": "string"
+      "type": [
+        "number",
+        "string"
+      ]
     }
   },
   "required": [

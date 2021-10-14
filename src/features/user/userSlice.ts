@@ -77,6 +77,11 @@ export const userSlice = createSlice({
         checked: true,
         success: false
       }
+    },
+    logout: (state) => {
+      // remove user info from local storage
+      localStorage.removeItem("club17app.user")
+      state.info = undefined
     }
   },
   extraReducers: (builder) => {
@@ -115,6 +120,6 @@ export const userSlice = createSlice({
   }
 })
 
-export const { setUserInfo, setAuthCheckingError } = userSlice.actions
+export const { setUserInfo, setAuthCheckingError, logout } = userSlice.actions
 
 export default userSlice.reducer

@@ -73,18 +73,18 @@ export const updateMember = createAsyncThunk<
   }
 >('member/update', async (data, thunkApi) => {
   try {
-    const { token, ...memberData } = data
+    const { token, _id, ...memberData } = data
     await axios({
       method: "PUT",
-      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/member/update/info/${memberData._id}`,
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/member/update/info/${_id}`,
+      data: memberData,
       headers: {
         "x-access-token": token
       }
     });
-    return memberData
+    return { ...memberData, _id }
   } catch (err) {
     return thunkApi.rejectWithValue(err.response.data)
-
   }
 })
 
