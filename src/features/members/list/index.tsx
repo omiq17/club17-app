@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Box, Button, Divider, Flex, Grid, Heading, Image, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, Grid, Heading, Image, SkeletonCircle, SkeletonText, Text, useDisclosure } from "@chakra-ui/react";
 import { PlusSquareIcon } from '@chakra-ui/icons'
 import { useRouter } from "next/dist/client/router";
 
@@ -64,7 +64,7 @@ export default function MembersList() {
     router.push("/")
   }
 
-  return hasUserChecked.current ? (
+  return hasUserChecked.current && list.length > 0 ? (
     <Box minH="100vh" w="100%" m="10">
       <Flex justifyContent="space-between">
         <Image boxSize="3rem" src="/club17.png" alt="Club17" />
@@ -125,5 +125,11 @@ export default function MembersList() {
       />
     </Box>
   ) :
-    null
+    (
+      <Box padding="6" boxShadow="lg" bg="white" minH="100vh" w="100%">
+        <Heading color="primary.main" as="h1" size="xl" textAlign="center">Members</Heading>
+        <SkeletonCircle size="10" mt="20" />
+        <SkeletonText mt="4" noOfLines={3} spacing="4" />
+      </Box>
+    )
 }
