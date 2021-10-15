@@ -6,6 +6,10 @@ import {
 
 // Extend the chakra theme to include custom colors, fonts, etc
 const club17Theme = {
+  fonts: {
+    heading: "Lato",
+    body: "Lato",
+  },
   colors: {
     primary: {
       colorScheme: baseTheme.colors.teal,
