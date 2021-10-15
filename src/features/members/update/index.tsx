@@ -76,6 +76,7 @@ export function UpdateMemberModal(props: IProps) {
             if (updateMember.fulfilled.match(updateMemberAction)) {
               onClose()
               setData(undefined)
+              setImageFile(undefined)
             }
           })
           .catch(() => {
@@ -109,7 +110,9 @@ export function UpdateMemberModal(props: IProps) {
               <VStack spacing="4">
                 <Box w="100%" p="0 0.5rem">
                   <Image
-                    src={`https://ucarecdn.com/${data?.avatar}/`}
+                    src={imageFile ?
+                      URL.createObjectURL(imageFile) :
+                      `https://ucarecdn.com/${data?.avatar}/`}
                     borderRadius="lg"
                     boxSize="6rem"
                     alt={data?.name} />

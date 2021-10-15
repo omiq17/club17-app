@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import {
-  Box, Button, Input, Modal, ModalBody, ModalCloseButton, ModalContent,
+  Box, Button, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent,
   ModalFooter, ModalHeader, ModalOverlay, Text, VStack
 } from "@chakra-ui/react";
 
@@ -23,7 +23,7 @@ export function AddMemberModal(props: IProps) {
   const { loading } = useAppSelector(state => state.members)
 
   const [data, setData] = useState<IAddMemberAttributes | undefined>()
-  const [imageFile, setImageFile] = useState<File | undefined>();
+  const [imageFile, setImageFile] = useState<File | undefined>()
   const [errors, setErrors] = useState<IAddMemberFormErrors | undefined>()
   const dispatch = useAppDispatch()
 
@@ -74,6 +74,7 @@ export function AddMemberModal(props: IProps) {
           if (addMember.fulfilled.match(addMemberAction)) {
             onClose()
             setData(undefined)
+            setImageFile(undefined)
           }
         })
         .catch(() => {
@@ -140,7 +141,14 @@ export function AddMemberModal(props: IProps) {
                 <ErrorText message={errors?.phone} />
 
                 <Box w="100%" p="0 0.5rem">
-                  <Text color="gray">Avatar</Text>
+                  <Image
+                    src={imageFile ?
+                      URL.createObjectURL(imageFile) :
+                      "https://s3.eu-central-1.amazonaws.com/web.eu-central-1.sumra.net/noimage.png"}
+                    borderRadius="lg"
+                    boxSize="6rem"
+                    alt={data?.name} />
+                  <Text color="gray" mt="2">Avatar</Text>
                   <Input
                     variant="unstyled"
                     p="0.25rem 0"
