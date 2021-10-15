@@ -65,7 +65,10 @@ export default memo(function MemberCard(props: IProps) {
           <Circle size="6" bg="white" color="gray.400" >
             <TimeIcon />
           </Circle>
-          <Text color="gray.600">{data.dob}</Text>
+          <Text color="gray.600">
+            {new Intl.DateTimeFormat('default', { dateStyle: 'medium' })
+              .format(new Date(data.dob))}
+          </Text>
         </HStack>
 
         {data.phone &&

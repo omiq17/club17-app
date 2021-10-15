@@ -143,8 +143,7 @@ export function AddMemberModal(props: IProps) {
                 <Box w="100%" p="0 0.5rem">
                   <Image
                     src={imageFile ?
-                      URL.createObjectURL(imageFile) :
-                      "https://s3.eu-central-1.amazonaws.com/web.eu-central-1.sumra.net/noimage.png"}
+                      URL.createObjectURL(imageFile) : "/no-image.png"}
                     borderRadius="lg"
                     boxSize="6rem"
                     alt={data?.name} />
