@@ -68,7 +68,7 @@ export default function MembersList() {
     <Box minH="100vh" w="100%" m="10">
       <Flex justifyContent="space-between">
         <Image boxSize="3rem" src="/club17.png" alt="Club17" />
-        <Heading color="primary.main" as="h1" size="lg" textAlign="center">All Members</Heading>
+        <Heading color="primary.main" as="h1" size="xl" textAlign="center">Members</Heading>
         <Button
           variant="link"
           onClick={onLogout}
@@ -90,7 +90,7 @@ export default function MembersList() {
         </Button>
       </Flex>
 
-      <Grid templateColumns="repeat(4, 1fr)" gap={4}>
+      <Grid templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }} gap={4}>
         {!!list.length ? list.map((member, i) =>
           <MemberCard
             key={i}
