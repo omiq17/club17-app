@@ -1,8 +1,8 @@
+import { useState } from "react";
 import { Box, Button, Heading, Image, Input, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/dist/client/router";
-import { useEffect, useState } from "react";
+
 import ErrorText from "../../../common/components/ErrorText";
-import { showSuccessToast } from "../../../common/utils/toasts";
 import validator from "../../../common/validator";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { singUpSchema } from "../../../schemas";
@@ -16,13 +16,6 @@ export default function SignupMain() {
   const { loading, auth } = useAppSelector(state => state.user)
   const dispatch = useAppDispatch()
   const router = useRouter()
-
-  useEffect(() => {
-    if (auth.success) {
-      router.push("/members")
-      showSuccessToast("Already logged in")
-    }
-  }, [auth, router])
 
   const onInputChange = (event) => setData({
     ...data,

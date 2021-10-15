@@ -31,7 +31,7 @@ export default function MembersList() {
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const hasUserChecked = useRef(false)
-  const { members: { list }, user: { info: userInfo } } = useAppSelector(state => state)
+  const { members: { list, listLoading }, user: { info: userInfo } } = useAppSelector(state => state)
 
   const dispatch = useAppDispatch()
   const router = useRouter();
@@ -64,72 +64,74 @@ export default function MembersList() {
     router.push("/")
   }
 
-  return hasUserChecked.current && list.length > 0 ? (
-    <Box minH="100vh" w="100%" m="10">
-      <Flex justifyContent="space-between">
-        <Image boxSize="3rem" src="/club17.png" alt="Club17" />
-        <Heading color="primary.main" as="h1" size="xl" textAlign="center">Members</Heading>
-        <Button
-          variant="link"
-          onClick={onLogout}
-        >
-          Logout
-        </Button>
-      </Flex>
-
-      <Divider m="1rem 0" />
-
-      <Flex mb="2" justifyContent="space-between" alignItems="center">
-        <Text color="gray.700">Total: {list.length}</Text>
-        <Button
-          variant="ghost"
-          leftIcon={<PlusSquareIcon />}
-          onClick={onAddModalOpen}
-        >
-          Member
-        </Button>
-      </Flex>
-
-      <Grid templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }} gap={4}>
-        {!!list.length ? list.map((member, i) =>
-          <MemberCard
-            key={i}
-            data={member}
-            index={i}
-            onRemoveInit={onRemoveInit}
-            onUpdateInit={onUpdateInit}
-          />
-        ) :
-          <Text>No member has added</Text>
-        }
-      </Grid>
-
-      <AddMemberModal
-        token={userInfo?.token}
-        isOpen={isAddModalOpen}
-        onClose={onAddModalClose}
-      />
-
-      <RemoveMemberModal
-        token={userInfo?.token}
-        isOpen={isRemoveModalOpen}
-        onClose={onRemoveModalClose}
-        member={selectedIndex !== null ? { ...list[selectedIndex] } : undefined}
-      />
-
-      <UpdateMemberModal
-        token={userInfo?.token}
-        isOpen={isUpdateModalOpen}
-        onClose={onUpdateModalClose}
-        member={selectedIndex !== null ? { ...list[selectedIndex] } : undefined}
-      />
-    </Box>
-  ) :
+  return listLoading ?
     (
       <Box padding="6" boxShadow="lg" bg="white" minH="100vh" w="100%">
         <Heading color="primary.main" as="h1" size="xl" textAlign="center">Members</Heading>
         <SkeletonCircle size="10" mt="20" />
         <SkeletonText mt="4" noOfLines={3} spacing="4" />
+      </Box>
+    )
+    :
+    (
+      <Box minH="100vh" w="100%" m="10">
+        <Flex justifyContent="space-between">
+          <Image boxSize="3rem" src="/club17.png" alt="Club17" />
+          <Heading color="primary.main" as="h1" size="xl" textAlign="center">Members</Heading>
+          <Button
+            variant="link"
+            onClick={onLogout}
+          >
+            Logout
+          </Button>
+        </Flex>
+
+        <Divider m="1rem 0" />
+
+        <Flex mb="2" justifyContent="space-between" alignItems="center">
+          <Text color="gray.700">Total: {list.length}</Text>
+          <Button
+            variant="ghost"
+            leftIcon={<PlusSquareIcon />}
+            onClick={onAddModalOpen}
+          >
+            Member
+          </Button>
+        </Flex>
+
+        <Grid templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }} gap={4}>
+          {!!list.length ? list.map((member, i) =>
+            <MemberCard
+              key={i}
+              data={member}
+              index={i}
+              onRemoveInit={onRemoveInit}
+              onUpdateInit={onUpdateInit}
+            />
+          ) :
+            <Text>No member has added</Text>
+          }
+        </Grid>
+
+        <AddMemberModal
+          token={userInfo?.token}
+          isOpen={isAddModalOpen}
+          onClose={onAddModalClose}
+        />
+
+        <RemoveMemberModal
+          token={userInfo?.token}
+          isOpen={isRemoveModalOpen}
+          onClose={onRemoveModalClose}
+          member={selectedIndex !== null ? { ...list[selectedIndex] } : undefined}
+        />
+
+        <UpdateMemberModal
+          token={userInfo?.token}
+          isOpen={isUpdateModalOpen}
+          onClose={onUpdateModalClose}
+          member={selectedIndex !== null ? { ...list[selectedIndex] } : undefined}
+        />
       </Box>
     )
 }

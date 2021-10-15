@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/dist/client/router";
 import { Box, Button, Heading, Image, Input, VStack } from "@chakra-ui/react";
 
-import { showSuccessToast } from "../../../common/utils/toasts";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { loginSchema } from "../../../schemas";
 import { ILoginAttributes, ILoginFormErrors } from "../types";
@@ -14,16 +13,9 @@ export default function LoginMain() {
   const [data, setData] = useState<ILoginAttributes | undefined>()
   const [errors, setErrors] = useState<ILoginFormErrors | undefined>()
 
-  const { loading, auth } = useAppSelector(state => state.user)
+  const { loading } = useAppSelector(state => state.user)
   const dispatch = useAppDispatch()
   const router = useRouter()
-
-  useEffect(() => {
-    if (auth.success) {
-      router.push("/members")
-      showSuccessToast("Already logged in")
-    }
-  }, [auth, router])
 
   const onInputChange = (event) => setData({
     ...data,

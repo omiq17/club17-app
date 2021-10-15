@@ -10,11 +10,13 @@ import {
 interface IMemberState {
   list: IMember[];
   loading: boolean;
+  listLoading: boolean;
 }
 
 const initialState: IMemberState = {
   list: [],
   loading: false,
+  listLoading: false,
 };
 
 export const getMembersList = createAsyncThunk<
@@ -126,14 +128,14 @@ export const membersSlice = createSlice({
     builder
       // Get members list cases
       .addCase(getMembersList.pending, (state) => {
-        state.loading = true
+        state.listLoading = true
       })
       .addCase(getMembersList.fulfilled, (state, action) => {
         state.list = action.payload.members
-        state.loading = false
+        state.listLoading = false
       })
       .addCase(getMembersList.rejected, (state, action) => {
-        state.loading = false
+        state.listLoading = false
         const errorMessage = action.payload?.message || action.error.message
         showErrorToast("Unable to get members list", errorMessage)
       })
