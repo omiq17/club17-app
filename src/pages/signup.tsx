@@ -12,7 +12,7 @@ export default function Login() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!hasUserChecked) {
+    if (!hasUserChecked.current) {
       if (userInfo) {
         router.push("/members")
         showSuccessToast("Already logged in")
