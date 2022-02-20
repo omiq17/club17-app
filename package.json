@@ -13,7 +13,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@reduxjs/toolkit": "^1.6.2",
-    "ajv": "^8.6.3",
+    "ajv": "^8.9.0",
     "ajv-errors": "^3.0.0",
     "axios": "^0.22.0",
     "framer-motion": "^4",
